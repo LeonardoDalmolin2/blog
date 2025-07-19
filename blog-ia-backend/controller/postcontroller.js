@@ -1,6 +1,5 @@
 const Post = require('../models/posts.js');
 
-// Criar um post
 const createPost = async (req, res) => {
   const { title, text } = req.body;
   const post = new Post({ title, text });
@@ -13,7 +12,6 @@ const createPost = async (req, res) => {
   }
 };
 
-// Buscar todos os posts
 const getPosts = async (req, res) => {
   try {
     const posts = await Post.find().sort({ createdAt: -1 });

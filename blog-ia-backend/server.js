@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 const postsRoutes = require('./routes/posts.js');
+const themesRoutes = require('./routes/theme.js');
+
 
 const app = express();
 
@@ -16,6 +18,8 @@ app.use(express.json());
 
 // Rotas
 app.use('/posts', postsRoutes);
+app.use('/themes', themesRoutes);
+
 
 mongoose.connect(MONGO_URI)
   .then(() => {

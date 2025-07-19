@@ -1,16 +1,11 @@
-# Node.js dependencies
 /node_modules
 
-# Env files
 .env
 
-# Logs
 logs
 *.log
 npm-debug.log*
 
-# Sistema operacional
 .DS_Store
 
-# Pastas de build (se usar alguma)
 /dist
