@@ -74,11 +74,19 @@ const generatePost = async (req, res) => {
     theme.alreadyUsed = true;
     await theme.save();
 
-    res.json(newPost);
+    if (res) {
+      res.json(newPost);
+    } else {
+      console.log("Post gerado com sucesso via cronjob:", newPost.title);
+    }
 
   } catch (err) {
     console.error("Erro detalhado:", err);
-    res.status(500).json({ message: "Erro ao gerar post com Gemini." });
+    if (res) {
+      res.status(500).json({ message: "Erro ao gerar post com Gemini." });
+    } else {
+      console.error("Erro ao gerar post com Gemini.");
+    }
   }
 };
 

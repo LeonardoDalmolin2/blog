@@ -5,7 +5,13 @@ const cors = require('cors');
 
 const postsRoutes = require('./routes/posts.js');
 const themesRoutes = require('./routes/theme.js');
+const cron = require('node-cron');
+const { generatePost } = require('./controller/postcontroller.js');
 
+cron.schedule('03 16 * * *', () => {
+  console.log("Executando geração diária de post...");
+  generatePost();
+});
 
 const app = express();
 
