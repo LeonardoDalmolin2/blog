@@ -1,4 +1,6 @@
 const Post = require('../models/posts.js');
+const genAI = require('../utils/gemini');
+const Theme = require('../models/theme.js');
 
 const createPost = async (req, res) => {
   const { title, text } = req.body;
@@ -33,4 +35,51 @@ const getPostById = async (req, res) => {
   }
 }
 
-module.exports = { createPost, getPosts, getPostById };
+const generatePost = async (req, res) => {
+  try {
+    console.log("Buscando tema não utilizado...");
+
+    const theme = await Theme.findOne({ alreadyUsed: false });
+
+    if (!theme) {
+      return res.status(404).json({ message: "Nenhum tema disponível para gerar post." });
+    }
+
+    console.log("Tema encontrado:", theme.name);
+
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
+
+    const prompt = `Crie um post de blog sobre o tema: "${theme.name}". 
+    Escreva em português brasileiro, de forma natural e envolvente, com título e texto separados por '|||'. Responda apenas com o titulo e texto, sem introdução ou explicação.`;
+
+    const result = await model.generateContent(prompt);
+    const text = result.response.text();
+
+    console.log("Resposta do Gemini:", text);
+
+    const [title, ...bodyParts] = text.split('|||');
+    const body = bodyParts.join('|||').trim();
+
+    if (!title || !body) {
+      return res.status(500).json({ message: "Erro ao gerar post: formato inesperado da resposta." });
+    }
+
+    const newPost = new Post({
+      title: title.trim(),
+      text: body
+    });
+
+    await newPost.save();
+
+    theme.alreadyUsed = true;
+    await theme.save();
+
+    res.json(newPost);
+
+  } catch (err) {
+    console.error("Erro detalhado:", err);
+    res.status(500).json({ message: "Erro ao gerar post com Gemini." });
+  }
+};
+
+module.exports = { createPost, getPosts, getPostById, generatePost };
