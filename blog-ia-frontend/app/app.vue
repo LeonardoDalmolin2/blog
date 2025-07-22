@@ -1,5 +1,7 @@
 <template>
-  <div class="bg-blue-500 text-white p-4">
-    Teste Tailwind CSS
+  <div>
+    <header>Meu Header Global</header>
+    <NuxtPage />
+    <footer>Meu Footer Global</footer>
   </div>
 </template>
